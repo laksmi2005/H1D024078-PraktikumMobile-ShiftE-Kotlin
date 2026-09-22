@@ -36,3 +36,23 @@ Pada pertemuan pertama, praktikum membahas inisialisasi proyek Android menggunak
 
 **Kesimpulan Praktikum:**  
 Pada pertemuan kedua, praktikum mempelajari penerapan Material Design 3 menggunakan Jetpack Compose, meliputi pengaturan palet warna (`Color.kt`), tema terang/gelap serta menonaktifkan *Dynamic Color* (`Theme.kt`), dan tipografi (`Type.kt`). Selain itu, dilakukan pembuatan layar baru (`BasicInfoScreen` dan `HubungiKamiScreen`) dengan komponen `Scaffold`, `TopAppBar`, `Card`, `OutlinedTextField`, `Button`, *Vector Asset* ikon, `Snackbar` untuk umpan balik pengiriman pesan, serta navigasi antar layar menggunakan `NavHost` dan `NavController`.
+
+---
+
+## 📝 Tugas Pertemuan 3
+**Tanggal**: Rabu, 16 September 2026
+
+**Light Mode**
+
+| Kategori Makanan | Kategori Minuman | Kategori Kerajinan |
+| :---: | :---: | :---: |
+| ![Daftar Produk Makanan (Light Mode)](docs/tugas-3-makanan-light.jpg) | ![Daftar Produk Minuman (Light Mode)](docs/tugas-3-minuman-light.jpg) | ![Daftar Produk Kerajinan (Light Mode)](docs/tugas-3-kerajinan-light.jpg) |
+
+**Dark Mode**
+
+| Kategori Makanan | Kategori Minuman | Kategori Kerajinan |
+| :---: | :---: | :---: |
+| ![Daftar Produk Makanan (Dark Mode)](docs/tugas-3-makanan-dark.jpg) | ![Daftar Produk Minuman (Dark Mode)](docs/tugas-3-minuman-dark.jpg) | ![Daftar Produk Kerajinan (Dark Mode)](docs/tugas-3-kerajinan-dark.jpg) |
+
+**Kesimpulan Praktikum:**  
+Pada pertemuan ketiga, praktikum mempelajari penerapan *Dynamic Lists* menggunakan *Lazy Layouts* di Jetpack Compose. Mahasiswa membuat struktur data menggunakan Kotlin `data class` (`Category` dan `Product`) dengan fitur *null-safety*, menyediakan data tiruan melalui *Singleton* `object DummyData`, menyusun daftar kategori horizontal menggunakan `LazyRow` serta daftar produk dua kolom menggunakan `LazyVerticalGrid` yang difilter berdasarkan kategori aktif, menambahkan umpan balik `Toast` saat produk diklik, membuat `@Preview` tema terang dan gelap, serta menambahkan `HomeActivity` sebagai *Launcher Activity* baru di `AndroidManifest.xml`.
