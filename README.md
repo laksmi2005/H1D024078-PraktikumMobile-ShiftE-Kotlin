@@ -56,3 +56,23 @@ Pada pertemuan kedua, praktikum mempelajari penerapan Material Design 3 mengguna
 
 **Kesimpulan Praktikum:**  
 Pada pertemuan ketiga, praktikum mempelajari penerapan *Dynamic Lists* menggunakan *Lazy Layouts* di Jetpack Compose. Mahasiswa membuat struktur data menggunakan Kotlin `data class` (`Category` dan `Product`) dengan fitur *null-safety*, menyediakan data tiruan melalui *Singleton* `object DummyData`, menyusun daftar kategori horizontal menggunakan `LazyRow` serta daftar produk dua kolom menggunakan `LazyVerticalGrid` yang difilter berdasarkan kategori aktif, menambahkan umpan balik `Toast` saat produk diklik, membuat `@Preview` tema terang dan gelap, serta menambahkan `HomeActivity` sebagai *Launcher Activity* baru di `AndroidManifest.xml`.
+
+---
+
+## 📝 Tugas Pertemuan 4
+**Tanggal**: Rabu, 23 September 2026
+
+**Light Mode**
+
+| Daftar Produk & Menu | Detail Produk | Form Hubungi Kami |
+| :---: | :---: | :---: |
+| ![Daftar Produk & Menu (Light Mode)](docs/tugas-4-daftar-light.jpg) | ![Detail Produk (Light Mode)](docs/tugas-4-detail-light.jpg) | ![Form Hubungi Kami (Light Mode)](docs/tugas-4-form-light.jpg) |
+
+**Dark Mode**
+
+| Daftar Produk & Menu | Detail Produk | Form Hubungi Kami |
+| :---: | :---: | :---: |
+| ![Daftar Produk & Menu (Dark Mode)](docs/tugas-4-daftar-dark.jpg) | ![Detail Produk (Dark Mode)](docs/tugas-4-detail-dark.jpg) | ![Form Hubungi Kami (Dark Mode)](docs/tugas-4-form-dark.png) |
+
+**Kesimpulan Praktikum:**  
+Pada pertemuan keempat, praktikum mempelajari pengelolaan *State*, *Recomposition*, dan *UI Lifecycle* di Jetpack Compose dengan menerapkan *State Hoisting* serta pola *Unidirectional Data Flow (UDF)* untuk memisahkan komponen *Stateful* dan *Stateless* (`StatelessFormHubungiKami`, `StatelessDaftarProduct`, dan `StatelessDetailProduct`). Mahasiswa mengimplementasikan `rememberSaveable`, validasi form interaktif (`ExposedDropdownMenuBox`, `PickVisualMedia`, `Checkbox`, serta izin akses media di `AndroidManifest.xml`), simulasi proses asinkronus menggunakan `LaunchedEffect` dan `delay`, fitur pencarian produk, halaman detail produk dengan pengaturan jumlah beli, serta navigasi antar halaman menggunakan `NavHost` beserta pengiriman argumen `productId` dan menu aksi di `TopAppBar`.
