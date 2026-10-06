@@ -1,6 +1,5 @@
 package com.pemmob.putriisnainilaksitautami.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,31 +50,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.pemmob.putriisnainilaksitautami.R
-import com.pemmob.putriisnainilaksitautami.data.dummy.DummyData
 import com.pemmob.putriisnainilaksitautami.data.model.Category
 import com.pemmob.putriisnainilaksitautami.data.model.Product
 import com.pemmob.putriisnainilaksitautami.ui.theme.PutriIsnainiLaksitaUtamiTheme
-import kotlinx.coroutines.delay
-
-fun productImageRes(img: String): Int = when (img) {
-    "prod_kripik_singkong" -> R.drawable.prod_kripik_singkong
-    "prod_mendoan" -> R.drawable.prod_mendoan
-    "prod_sale_pisang" -> R.drawable.prod_sale_pisang
-    "prod_getuk_goreng" -> R.drawable.prod_getuk_goreng
-    "prod_nopia" -> R.drawable.prod_nopia
-    "prod_es_dawet" -> R.drawable.prod_es_dawet
-    "prod_kopi_robusta" -> R.drawable.prod_kopi_robusta
-    "prod_wedang_jahe" -> R.drawable.prod_wedang_jahe
-    "prod_teh_poci" -> R.drawable.prod_teh_poci
-    "prod_sirup_stroberi" -> R.drawable.prod_sirup_stroberi
-    "prod_batik_purbalingga" -> R.drawable.prod_batik_purbalingga
-    "prod_sandal_bandol" -> R.drawable.prod_sandal_bandol
-    "prod_sapu_glagah" -> R.drawable.prod_sapu_glagah
-    "prod_gantungan_kunci" -> R.drawable.prod_gantungan_kunci
-    "prod_tas_rajut" -> R.drawable.prod_tas_rajut
-    else -> R.drawable.dummy_product
-}
+import com.pemmob.putriisnainilaksitautami.ui.viewmodel.ProductUiState
+import com.pemmob.putriisnainilaksitautami.ui.viewmodel.ProductViewModel
+import com.pemmob.putriisnainilaksitautami.util.JualanConstants.BASE_URL
 
 @Composable
 fun ProductItemCard(product: Product, onClick: () -> Unit) {
@@ -88,18 +70,22 @@ fun ProductItemCard(product: Product, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            val imageRes = productImageRes(product.img)
+            val imageModel: Any = if (product.img == "dummy_product") {
+                R.drawable.dummy_product
+            } else {
+                "${BASE_URL}img/${product.img}"
+            }
 
             Box(modifier = Modifier.fillMaxWidth()) {
-                Image(
-                    painter = painterResource(id = imageRes),
+                AsyncImage(
+                    model = imageModel,
                     contentDescription = product.name,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.White),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
                 )
 
                 if (product.category != null) {
@@ -170,46 +156,59 @@ fun CategoryItem(category: Category, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun DaftarProdukScreen(navController: NavController? = null) {
-    var selectedCategoryId by rememberSaveable { mutableStateOf(DummyData.categories.firstOrNull()?.id) }
+fun DaftarProdukScreen(
+    navController: NavController? = null,
+    viewModel: ProductViewModel
+) {
+    var selectedCategoryId by rememberSaveable { mutableStateOf<Int?>(null) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var filteredProducts by remember { mutableStateOf(emptyList<Product>()) }
+    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(selectedCategoryId, searchQuery) {
-        isLoading = true
-        delay(1000)
-
-        val filteredByCategory = if (selectedCategoryId != null) {
-            DummyData.products.filter { it.category_id == selectedCategoryId }
-        } else {
-            DummyData.products
+    when (val state = uiState) {
+        is ProductUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
         }
-
-        filteredProducts = if (searchQuery.isBlank()) {
-            filteredByCategory
-        } else {
-            filteredByCategory.filter { it.name.contains(searchQuery, ignoreCase = true) }
+        is ProductUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Error: ${state.message}", color = MaterialTheme.colorScheme.error)
+            }
         }
+        is ProductUiState.Success -> {
+            if (selectedCategoryId == null && state.categories.isNotEmpty()) {
+                selectedCategoryId = state.categories.first().id
+            }
 
-        isLoading = false
+            val filteredByCategory = if (selectedCategoryId != null) {
+                state.products.filter { it.category_id == selectedCategoryId }
+            } else {
+                state.products
+            }
+
+            val filteredProducts = if (searchQuery.isBlank()) {
+                filteredByCategory
+            } else {
+                filteredByCategory.filter { it.name.contains(searchQuery, ignoreCase = true) }
+            }
+
+            StatelessDaftarProduct(
+                categories = state.categories,
+                selectedCategoryId = selectedCategoryId,
+                onCategorySelected = { selectedCategoryId = it },
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it },
+                isLoading = false,
+                products = filteredProducts,
+                onProductClick = { product ->
+                    navController?.navigate("detail/${product.id}")
+                },
+                onContactUsClick = {
+                    navController?.navigate("hubungi_kami")
+                }
+            )
+        }
     }
-
-    StatelessDaftarProduct(
-        categories = DummyData.categories,
-        selectedCategoryId = selectedCategoryId,
-        onCategorySelected = { selectedCategoryId = it },
-        searchQuery = searchQuery,
-        onSearchQueryChange = { searchQuery = it },
-        isLoading = isLoading,
-        products = filteredProducts,
-        onProductClick = { product ->
-            navController?.navigate("detail/${product.id}")
-        },
-        onContactUsClick = {
-            navController?.navigate("hubungi_kami")
-        }
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -354,33 +353,19 @@ fun StatelessDaftarProduct(
 @Preview(showBackground = true)
 @Composable
 fun PreviewDaftarProdukLight() {
+    val sampleCategory = Category(1, "Makanan", "Aneka Makanan Lokal", 5)
+    val sampleProducts = listOf(
+        Product(1, 1, sampleCategory, "Kripik Singkong", "Kripik gurih", 15000.0, 50, "dummy_product")
+    )
     PutriIsnainiLaksitaUtamiTheme(darkTheme = false) {
         StatelessDaftarProduct(
-            categories = DummyData.categories,
+            categories = listOf(sampleCategory),
             selectedCategoryId = 1,
             onCategorySelected = {},
             searchQuery = "",
             onSearchQueryChange = {},
             isLoading = false,
-            products = DummyData.products.filter { it.category_id == 1 },
-            onProductClick = {},
-            onContactUsClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewDaftarProdukDark() {
-    PutriIsnainiLaksitaUtamiTheme(darkTheme = true) {
-        StatelessDaftarProduct(
-            categories = DummyData.categories,
-            selectedCategoryId = 1,
-            onCategorySelected = {},
-            searchQuery = "",
-            onSearchQueryChange = {},
-            isLoading = false,
-            products = DummyData.products.filter { it.category_id == 1 },
+            products = sampleProducts,
             onProductClick = {},
             onContactUsClick = {}
         )

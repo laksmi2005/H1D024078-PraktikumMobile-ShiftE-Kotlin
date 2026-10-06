@@ -76,3 +76,23 @@ Pada pertemuan ketiga, praktikum mempelajari penerapan *Dynamic Lists* menggunak
 
 **Kesimpulan Praktikum:**  
 Pada pertemuan keempat, praktikum mempelajari pengelolaan *State*, *Recomposition*, dan *UI Lifecycle* di Jetpack Compose dengan menerapkan *State Hoisting* serta pola *Unidirectional Data Flow (UDF)* untuk memisahkan komponen *Stateful* dan *Stateless* (`StatelessFormHubungiKami`, `StatelessDaftarProduct`, dan `StatelessDetailProduct`). Mahasiswa mengimplementasikan `rememberSaveable`, validasi form interaktif (`ExposedDropdownMenuBox`, `PickVisualMedia`, `Checkbox`, serta izin akses media di `AndroidManifest.xml`), simulasi proses asinkronus menggunakan `LaunchedEffect` dan `delay`, fitur pencarian produk, halaman detail produk dengan pengaturan jumlah beli, serta navigasi antar halaman menggunakan `NavHost` beserta pengiriman argumen `productId` dan menu aksi di `TopAppBar`.
+
+---
+
+## 📝 Tugas Pertemuan 5
+**Tanggal**: Rabu, 30 September 2026
+
+**Light Mode**
+
+| Daftar Produk (API) | Detail Produk (API) |
+| :---: | :---: |
+| ![Daftar Produk API (Light Mode)](docs/tugas-5-daftar-light.jpg) | ![Detail Produk API (Light Mode)](docs/tugas-5-detail-light.jpg) |
+
+**Dark Mode**
+
+| Daftar Produk (API) | Detail Produk (API) |
+| :---: | :---: |
+| ![Daftar Produk API (Dark Mode)](docs/tugas-5-daftar-dark.jpg) | ![Detail Produk API (Dark Mode)](docs/tugas-5-detail-dark.jpg) |
+
+**Kesimpulan Praktikum:**  
+Pada pertemuan kelima, praktikum mempelajari integrasi *Networking* dan arsitektur *MVVM (Model-View-ViewModel)* pada Jetpack Compose. Data *dummy* statis dihapus dan digantikan dengan pengambilan data JSON dari API (`https://pemmob-if.web.app/`) menggunakan *library* Retrofit dan Gson (`ApiInterface` dan `ApiClient`), disertai penambahan izin `INTERNET` di `AndroidManifest.xml` serta konstanta `BASE_URL` di `JualanConstants`. Pengelolaan status antarmuka (*Loading*, *Success*, dan *Error*) ditangani oleh `ProductViewModel` menggunakan `StateFlow` (`ProductUiState`) yang diamati secara reaktif dari UI lewat `collectAsState()`, serta pemuatan gambar produk dari server dilakukan secara asinkron menggunakan `AsyncImage` dari *library* Coil.
